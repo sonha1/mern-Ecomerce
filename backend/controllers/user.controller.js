@@ -67,11 +67,12 @@ export const getAllUsers = async (req, res, next) => {
   }
 };
 
-// get /api/v1/user/profile/:id  ---ALL---
+// get /api/v1/user/:id  ---ALL---
 export const profileUser = async (req, res, next) => {
   try {
+    console.log(req.params.id);
     const user = await _User.findById(req.params.id);
-    res.status(200).json({ user });
+    res.status(200).json({ ...user._doc });
   } catch (error) {
     console.error(error);
   }

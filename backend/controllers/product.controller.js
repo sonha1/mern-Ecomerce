@@ -39,7 +39,7 @@ export const getProducts = async (req, res, next) => {
       .find({ ...keyword, hide: null })
       .limit(pageSize)
       .skip(pageSize * (page - 1));
-
+    
     res
       .status(200)
       .json({ products, page, pages: Math.ceil(count / pageSize) });
@@ -52,8 +52,26 @@ export const getProducts = async (req, res, next) => {
 // get /api/v1/product/all ---admin---
 export const listProducts = async (req, res, next) => {
   try {
-    const products = await _Product.find({});
-    res.status(200).json(products);
+    const pageSize = 10;
+    const keyword = req.query.keyword
+      ? {
+          name: {
+            $regex: req.query.keyword,
+            $options: "i",
+          },
+        }
+      : {};
+    const count = await _Product.countDocuments({ ...keyword });
+    const page = Number(req.query.pageNumber) || 1;
+
+    const products = await _Product
+      .find({ ...keyword })
+      .limit(pageSize)
+      .skip(pageSize * (page - 1));
+
+    res
+      .status(200)
+      .json({ products, page, pages: Math.ceil(count / pageSize) });
   } catch (error) {
     console.error(error);
     next(error);
@@ -91,6 +109,7 @@ export const updateProduct = async (req, res, next) => {
     );
     res.status(200).json({
       message: "Product updated successfully",
+      product,
     });
   } catch (error) {
     console.error(error);
@@ -100,8 +119,12 @@ export const updateProduct = async (req, res, next) => {
 //get /api/v1/product/:id ---all---
 export const getDetailProduct = async (req, res, next) => {
   try {
-    const product = await _Product.findById(req.params.id);
-    res.status(200).json({ product });
+    
+    const product = await _Product
+      .findById(req.params.id)
+      .populate("reviews.user", "name");
+    
+    res.status(200).json({ ...product._doc });
   } catch (error) {
     console.error(error);
     next(error);
@@ -137,7 +160,7 @@ export const createReview = async (req, res, next) => {
       product.numOfReviews = 1;
     }
     product.countRating();
-    console.log(product);
+
     await product.save();
     return res.status(200).json({ message: "successfully" });
   } catch (error) {
@@ -153,7 +176,7 @@ export const deleteReview = async (req, res, next) => {
     product.reviews = product.reviews.filter(
       (rv) => rv.user.toString() !== req.user.id
     );
-    console.log(product);
+
     if (product.numOfReviews > 0) {
       product.numOfReviews--;
     }
@@ -165,6 +188,8 @@ export const deleteReview = async (req, res, next) => {
     next(error);
   }
 };
+
+// update /api/v1/product/review/update/:id
 export const updateReview = async (req, res, next) => {
   try {
   } catch (error) {}

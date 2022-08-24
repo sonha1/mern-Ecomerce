@@ -50,7 +50,15 @@ export const login = (email, password) => async (dispatch) => {
       payload: data,
     });
 
-    localStorage.setItem("userInfo", JSON.stringify(data));
+    let expires = new Date();
+    expires.setMinutes(expires.getMinutes() + 20);
+    console.log(expires);
+    const item = {
+      data,
+      expires: expires,
+    };
+    console.log(item);
+    localStorage.setItem("userInfo", JSON.stringify(item));
   } catch (error) {
     dispatch({
       type: USER_LOGIN_FAIL,
@@ -130,7 +138,7 @@ export const getUserDetails = (id) => async (dispatch, getState) => {
       },
     };
 
-    const { data } = await axios.get(`/api/users/${id}`, config);
+    const { data } = await axios.get(`/api/v1/user/${id}`, config);
 
     dispatch({
       type: USER_DETAILS_SUCCESS,
@@ -210,7 +218,7 @@ export const listUsers = () => async (dispatch, getState) => {
       },
     };
 
-    const { data } = await axios.get(`/api/users`, config);
+    const { data } = await axios.get(`/api/v1/user/all`, config);
 
     dispatch({
       type: USER_LIST_SUCCESS,
@@ -247,7 +255,7 @@ export const deleteUser = (id) => async (dispatch, getState) => {
       },
     };
 
-    await axios.delete(`/api/users/${id}`, config);
+    await axios.delete(`/api/v1/user/${id}`, config);
 
     dispatch({ type: USER_DELETE_SUCCESS });
   } catch (error) {
