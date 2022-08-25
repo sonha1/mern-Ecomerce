@@ -31,6 +31,19 @@ const orderSchema = mongoose.Schema(
     taxPrice: { type: Number, default: 0.0 },
     totalPrice: { type: Number, default: 0.0, required: true },
     paymentMethod: { type: String, required: true },
+    isPaid: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+    paidAt: {
+      type: Date,
+    },
+    isDelivered: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
   },
   { timestamps: true }
 );

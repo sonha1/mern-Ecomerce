@@ -25,7 +25,7 @@ export const createOrder = async (req, res, next) => {
 
     orderItems.forEach(async (item) => {
       const product = await _Product.findById(item.product);
-      product.reduceStock(item.stock);
+      product.reduceStock(item.qty);
       await product.save();
     });
     await order.save();
@@ -48,23 +48,20 @@ export const listOrders = async (req, res, next) => {
 };
 
 //  get /api/v1/order/admin/:id --admin
-export const getDetailOrderAdmin = async (req, res, next) => {
+// export const getDetailOrderAdmin = async (req, res, next) => {
+//   try {
+//     const order = await _Order.findById(req.params.id);
+//     res.status(200).json(order);
+//   } catch (error) {
+//     console.error(error);
+//     next(error);
+//   }
+// };
+
+//  get /api/v1/order/:id --user
+export const getDetailOrder = async (req, res, next) => {
   try {
     const order = await _Order.findById(req.params.id);
-    res.status(200).json(order);
-  } catch (error) {
-    console.error(error);
-    next(error);
-  }
-};
-//  get /api/v1/order/:id --user
-
-export const getDetailOrderUser = async (req, res, next) => {
-  try {
-    const order = await _Order.findOne({
-      _id: req.params.id,
-      user: req.user.id,
-    });
     res.status(200).json(order);
   } catch (error) {
     console.error(error);

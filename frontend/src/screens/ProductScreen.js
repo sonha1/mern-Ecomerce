@@ -130,13 +130,11 @@ const ProductScreen = ({ history, match }) => {
                             value={qty}
                             onChange={(e) => setQty(e.target.value)}
                           >
-                            {[...Array(product.countInStock).keys()].map(
-                              (x) => (
-                                <option key={x + 1} value={x + 1}>
-                                  {x + 1}
-                                </option>
-                              )
-                            )}
+                            {[...Array(product.stock).keys()].map((x) => (
+                              <option key={x + 1} value={x + 1}>
+                                {x + 1}
+                              </option>
+                            ))}
                           </Form.Control>
                         </Col>
                       </Row>
@@ -148,7 +146,7 @@ const ProductScreen = ({ history, match }) => {
                       onClick={addToCartHandler}
                       className="btn-block"
                       type="button"
-                      disabled={product.countInStock === 0}
+                      disabled={product.stock === 0}
                     >
                       Add To Cart
                     </Button>
